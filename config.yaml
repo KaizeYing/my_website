@@ -1,6 +1,6 @@
 baseURL: http://example.org/
 languageCode: en-us
-title: Forty
+title:  Portofolio Website
 theme: forty
 googleAnalytics: ''
 disqusShortname: ''
@@ -10,7 +10,7 @@ params:
     subtitle: |-
       A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Forty
+    title: Hi, my name is Kaize Ying
   blog: {}
   contact:
     address:
@@ -21,7 +21,7 @@ params:
     buttonClear: Clear
     buttonSend: Send message
     email:
-      - email: example@domain.com
+      - email: kying.mfa2022@london.edu
         title: Email
     enable: yes
     phone:
