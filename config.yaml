@@ -1,6 +1,6 @@
-baseURL: http://example.org/
+baseURL: https://kostis-portfolio.netlify.app/ 
 languageCode: en-us
-title:  Portofolio Website
+title:  Portofolio Website from Kaize Ying for Kostis
 theme: forty
 googleAnalytics: ''
 disqusShortname: ''
@@ -10,22 +10,22 @@ params:
     subtitle: |-
       A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Kaize Ying
+    title: Hi, my name is Kaize Ying, MFA2022, love data analytics
   blog: {}
   contact:
     address:
-      - city: City, ST 00000
-        country: Country
-        street: Street
+      - city: London
+        country: UK
+        street: Park Road
         title: Address
     buttonClear: Clear
     buttonSend: Send message
     email:
-      - email: kying.mfa2022@london.edu
+      - email: k.ying2022@hotmail.com / kying.mfa2022@london.edu
         title: Email
     enable: yes
     phone:
-      - phone: (000) 000-0000 x1234
+      - phone: (0044) 7983-472801 x1234
         title: Phone
   custom_css: []
   custom_js: []
@@ -35,28 +35,28 @@ params:
     text: Please visit [this page](/)
   favicon: favicon.ico
   footer:
-    copyright: Company Name
+    copyright: London Business School
     enable: yes
     quicklinks:
       - alt: HTML5 UP
         text: 'Design: '
         url: https://www.html5up.net
     social:
-      - icon: fa-twitter
-        label: Twitter
-        url: https://www.twitter.com
-      - icon: fa-facebook
-        label: Facebook
-        url: https://www.facebook.com
-      - icon: fa-instagram
-        label: Instagram
-        url: https://www.instagram.com
+      #- icon: fa-twitter
+        #label: Twitter
+        #url: https://www.twitter.com
+      #- icon: fa-facebook
+        #label: Facebook
+        #url: https://www.facebook.com
+      #- icon: fa-instagram
+        #label: Instagram
+        #url: https://www.instagram.com
       - icon: fa-github
         label: GitHub
-        url: https://www.github.com
+        url: https://github.com/KaizeYing
       - icon: fa-linkedin
         label: LinkedIn
-        url: https://www.linkedin.com
+        url: https://www.linkedin.com/feed/
   image: ''
   name: Your name
   navigation:
@@ -69,19 +69,19 @@ params:
     links:
       - name: Home
         url: '#'
-      - name: Blogs
+      - #name: Blogs
         url: blogs
-      - name: Generic Blog
-        url: blogs/ipsum
-      - name: Elements
-        url: elements.html
+      #- name: Generic Blog
+       # url: blogs/ipsum
+      #- name: Elements
+       # url: elements.html
     menu: Menu
     subtitle: By HTML5 Up
     title: Forty
   tiles:
     enable: yes
     showcase:
-      - image: pic01.jpg
+      - image: pic06.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Aliquam
         url: blogs/aliquam
