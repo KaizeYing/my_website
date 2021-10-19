@@ -1,11 +1,11 @@
 ---
-title: "Risk-Return of DJIA stocks"
+title: Risk-Return of DJIA stocks
 date: '2021-09-30'
 description: Risk-Return of DJIA stocks
 draft: no
 image: spcies.jpg
 keywords: ''
-risk_return: risk_return
+slug: risk_return
 categories:
 - ''
 - ''
