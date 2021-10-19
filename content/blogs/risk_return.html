@@ -20,8 +20,8 @@ categories:
 <p>We will use the <code>rvest</code> package to scrape the Wikipedia page for the constituents of DJIA</p>
 <pre class="r"><code>djia_url &lt;- &quot;https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average&quot;
 
-knitr::include_graphics(&quot;/img/pic07.jpg&quot;,error =FALSE)</code></pre>
-<p><img src="/img/pic07.jpg" style="display: block; margin: auto;" /></p>
+knitr::include_graphics(&quot;/img/pic1.jpg&quot;,error =FALSE)</code></pre>
+<p><img src="/img/pic1.jpg" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#get tables that exist on URL
 tables &lt;- djia_url %&gt;% 
   read_html() %&gt;% 
@@ -109,5 +109,18 @@ myStocks_returns_monthly %&gt;%
     y = &quot;&quot; )+
   NULL</code></pre>
 <p><img src="/blogs/risk_return_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
-<p><img src="/blogs/risk_return_files/figure-html/risk_return-1.png" width="648" style="display: block; margin: auto;" /></p>
+<div id="it-can-easily-tell-that-all-the-djia-stocks-are-following-similar-patterns-for-monthly-returns.-this-makes-sense-as-stock-performance-is-quite-highly-correlated-with-market-conditions.-for-example-during-expansion-periods-equity-market-would-normally-go-through-a-bull-market-so-it-would-be-easy-for-the-stocks-to-generate-returns-while-in-bear-markets-such-returns-are-normally-lower-and-can-be-negative-even.-this-thus-results-into-the-similar-distributions-we-are-seeing." class="section level2">
+<h2>It can easily tell that all the DJIA stocks are following similar patterns for monthly returns. This makes sense as stock performance is quite highly correlated with market conditions. For example, during expansion periods, equity market would normally go through a “bull market”, so it would be easy for the stocks to generate returns, while in bear markets, such returns are normally lower and can be negative even. This thus results into the similar distributions we are seeing.</h2>
+</div>
+<div id="it-is-also-worth-nothcing-even-though-stocks-are-following-similar-patterns-there-are-still-differences-in-the-exact-returns-they-generaate-even-at-the-same-time.-this-can-be-quantified-as-beta-which-is-the-correlation-with-the-generally-equity-market.-for-example-for-stocks-with-beta-of-1-their-movements-are-exactly-with-the-market-while-for-stocks-with-beta-of-2-the-price-movements-would-be-the-twice-of-market-volatility." class="section level2">
+<h2>It is also worth nothcing even though stocks are following similar patterns, there are still differences in the exact returns they generaate even at the same time. This can be quantified as “beta”, which is the correlation with the generally equity market. For example, for stocks with beta of 1, their movements are exactly with the market, while for stocks with beta of 2, the price movements would be the twice of market volatility.</h2>
+<p><img src="/blogs/risk_return_files/figure-html/risk_return-1.png" width="648" style="display: block; margin: auto;" />
+## We can tell that from 2018 to 2019, generally, risks of stocks move to the higher end. This can be translatted into that generally equity market is going through a higher volatility, and the returns from equity compensated investors accordingly.</p>
+</div>
+<div id="however-from-2019-to-2020-even-though-risks-further-increased-shifted-to-the-right-returns-seems-to-stay-at-the-same-level-with-2019-or-even-lower.-this-is-possibly-due-to-the-unexpected-global-covid-19-pandemic-which-caused-nagtive-market-sentiments-and-thus-large-riskvolatility-of-the-equity-market.-for-some-investors-they-may-want-to-pull-out-their-investments-from-equity-market-as-the-additional-risks-they-take-are-not-compensated-accordingly." class="section level2">
+<h2>However from 2019 to 2020, even though risks further increased (shifted to the right), returns seems to stay at the same level with 2019, or even lower. This is possibly due to the unexpected global COVID-19 pandemic, which caused nagtive market sentiments and thus large risk/volatility of the equity market. For some investors, they may want to pull out their investments from equity market, as the additional risks they take are not compensated accordingly.</h2>
+</div>
+<div id="from-2020-to-2021-both-returns-and-risks-generally-decrease-which-suggests-a-calm-down-equity-market-by-comparing-to-2020.-also-2017-seems-to-be-the-most-suitable-year-for-equity-investing-due-to-the-relatively-higher-level-of-returns-while-lower-level-of-risks." class="section level2">
+<h2>From 2020 to 2021, both returns and risks generally decrease, which suggests a calm-down equity market, by comparing to 2020. Also, 2017 seems to be the most suitable year for equity investing, due to the relatively higher level of returns while lower level of risks.</h2>
+</div>
 </div>

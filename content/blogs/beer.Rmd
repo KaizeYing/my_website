@@ -1,0 +1,107 @@
+---
+title: "Beer consumption analysis"
+author: "Study Group A9"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,   
+  size="small")   
+options(digits = 3)
+
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)
+library(kableExtra)
+```
+
+# Where Do People Drink The Most Beer, Wine And Spirits?
+
+Back in 2014, [fivethiryeight.com](https://fivethirtyeight.com/features/dear-mona-followup-where-do-people-drink-the-most-beer-wine-and-spirits/) published an article on alcohol consumption in different countries. The data `drinks` is available as part of the `fivethirtyeight` package. Make sure you have installed the `fivethirtyeight` package before proceeding.
+
+```{r, load_alcohol_data}
+library(fivethirtyeight)
+data(drinks)
+```
+
+## What are the variable types? Any missing values we should worry about?
+
+Answer: From the below, we can see that there are no missing values. Variable types are character (country), double (total_litres_of_pure_alcohol), and integer (the rest variables) We can also see that Afghanistan has zero "total liters of pure alcohol consumed". One can expect this to be the case in other countries that have laws that forbid alcohol consumption.
+
+```{r glimpse_skim_data}
+  glimpse(drinks)
+  skim(drinks)
+```
+
+## Make a plot that shows the top 25 beer consuming countries
+
+```{r beer_plot}
+drinks %>%
+  slice_max(order_by= beer_servings, n=25) %>%
+  ggplot(aes(x=beer_servings, y=fct_reorder(country, beer_servings)))+
+  geom_col(fill='pink')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Beer Consumption", x="Beer Servings", y="Country Name")+ 
+  NULL
+```
+
+## Make a plot that shows the top 25 wine consuming countries
+
+```{r wine_plot}
+drinks %>%
+  slice_max(order_by= wine_servings, n=25) %>%
+  ggplot(aes(x=wine_servings, y=fct_reorder(country, wine_servings)))+
+  geom_col(fill='red')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Wine Consumption", x="Wine Servings", y="Country Name")+ 
+  NULL
+```
+
+## Make a plot that shows the top 25 spirit consuming countries
+
+```{r spirit_plot}
+drinks %>%
+  slice_max(order_by= spirit_servings, n=25) %>%
+  ggplot(aes(x=spirit_servings, y=fct_reorder(country, spirit_servings)))+
+  geom_col(fill='purple')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Spirit Consumption", x="Spirit Servings", y="Country Name")+ 
+  NULL
+```
+
+## What can you infer from these plots? Don't just explain what's in the graph, but speculate or tell a short story (1-2 paragraphs max).
+
+Answer: The evidence suggests no clear pattern in the leading countries consuming different types of alcohol. For instance: Namibia, Czech Republic and Gabon are the top 3 beer consuming countries. France, Portugal, Andorra are the top 3 wine consuming countries. Grenada, Belarus and Russian Federation are the top 3 Spirit consuming countries.**
+
+A noticeable pattern is that countries consume more alcohol, which is locally produced. For instance, beer is popular in Czech Republic as they are one of the world's largest producers of beer. The same applies to France for wine and Russia for spirits.
+
+In addition to this, further research is required to isolate consumption of locals and tourists as some of the top drinkers are holiday destinations (e.g. Caribbean islands).
+
+Moreover, some festivals may have an impact on the alcohol consumption. For example, around 6 million people take part in the Oktoberfest in Germany every October, which may add to the volume of beer consumed.

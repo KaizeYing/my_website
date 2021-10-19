@@ -1,0 +1,401 @@
+---
+title: "Beer consumption analysis"
+author: "Study Group A9"
+date: "2021-10-19"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="where-do-people-drink-the-most-beer-wine-and-spirits" class="section level1">
+<h1>Where Do People Drink The Most Beer, Wine And Spirits?</h1>
+<p>Back in 2014, <a href="https://fivethirtyeight.com/features/dear-mona-followup-where-do-people-drink-the-most-beer-wine-and-spirits/">fivethiryeight.com</a> published an article on alcohol consumption in different countries. The data <code>drinks</code> is available as part of the <code>fivethirtyeight</code> package. Make sure you have installed the <code>fivethirtyeight</code> package before proceeding.</p>
+<pre class="r"><code>library(fivethirtyeight)
+data(drinks)</code></pre>
+<div id="what-are-the-variable-types-any-missing-values-we-should-worry-about" class="section level2">
+<h2>What are the variable types? Any missing values we should worry about?</h2>
+<p>Answer: From the below, we can see that there are no missing values. Variable types are character (country), double (total_litres_of_pure_alcohol), and integer (the rest variables) We can also see that Afghanistan has zero “total liters of pure alcohol consumed”. One can expect this to be the case in other countries that have laws that forbid alcohol consumption.</p>
+<pre class="r"><code>  glimpse(drinks)</code></pre>
+<pre><code>## Rows: 193
+## Columns: 5
+## $ country                      &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Albania&quot;, &quot;Algeria&quot;, &quot;And…
+## $ beer_servings                &lt;int&gt; 0, 89, 25, 245, 217, 102, 193, 21, 261, 2…
+## $ spirit_servings              &lt;int&gt; 0, 132, 0, 138, 57, 128, 25, 179, 72, 75,…
+## $ wine_servings                &lt;int&gt; 0, 54, 14, 312, 45, 45, 221, 11, 212, 191…
+## $ total_litres_of_pure_alcohol &lt;dbl&gt; 0.0, 4.9, 0.7, 12.4, 5.9, 4.9, 8.3, 3.8, …</code></pre>
+<pre class="r"><code>  skim(drinks)</code></pre>
+<table style="width: auto;" class="table table-condensed">
+<caption>
+(#tab:glimpse_skim_data)Data summary
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Name
+</td>
+<td style="text-align:left;">
+drinks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of rows
+</td>
+<td style="text-align:left;">
+193
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of columns
+</td>
+<td style="text-align:left;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+_______________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Column type frequency:
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+character
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+________________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Group variables
+</td>
+<td style="text-align:left;">
+None
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+max
+</th>
+<th style="text-align:right;">
+empty
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+<th style="text-align:right;">
+whitespace
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+country
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+193
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+p0
+</th>
+<th style="text-align:right;">
+p25
+</th>
+<th style="text-align:right;">
+p50
+</th>
+<th style="text-align:right;">
+p75
+</th>
+<th style="text-align:right;">
+p100
+</th>
+<th style="text-align:left;">
+hist
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+beer_servings
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+106.16
+</td>
+<td style="text-align:right;">
+101.14
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+20.0
+</td>
+<td style="text-align:right;">
+76.0
+</td>
+<td style="text-align:right;">
+188.0
+</td>
+<td style="text-align:right;">
+376.0
+</td>
+<td style="text-align:left;">
+▇▃▂▂▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spirit_servings
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+80.99
+</td>
+<td style="text-align:right;">
+88.28
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+56.0
+</td>
+<td style="text-align:right;">
+128.0
+</td>
+<td style="text-align:right;">
+438.0
+</td>
+<td style="text-align:left;">
+▇▃▂▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+wine_servings
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+49.45
+</td>
+<td style="text-align:right;">
+79.70
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+8.0
+</td>
+<td style="text-align:right;">
+59.0
+</td>
+<td style="text-align:right;">
+370.0
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_litres_of_pure_alcohol
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4.72
+</td>
+<td style="text-align:right;">
+3.77
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1.3
+</td>
+<td style="text-align:right;">
+4.2
+</td>
+<td style="text-align:right;">
+7.2
+</td>
+<td style="text-align:right;">
+14.4
+</td>
+<td style="text-align:left;">
+▇▃▅▃▁
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="make-a-plot-that-shows-the-top-25-beer-consuming-countries" class="section level2">
+<h2>Make a plot that shows the top 25 beer consuming countries</h2>
+<pre class="r"><code>drinks %&gt;%
+  slice_max(order_by= beer_servings, n=25) %&gt;%
+  ggplot(aes(x=beer_servings, y=fct_reorder(country, beer_servings)))+
+  geom_col(fill=&#39;pink&#39;)+
+  theme_bw()+
+  labs(title=&quot;A Plot Showing Top 25 Countries by Beer Consumption&quot;, x=&quot;Beer Servings&quot;, y=&quot;Country Name&quot;)+ 
+  NULL</code></pre>
+<p><img src="/blogs/beer_files/figure-html/beer_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="make-a-plot-that-shows-the-top-25-wine-consuming-countries" class="section level2">
+<h2>Make a plot that shows the top 25 wine consuming countries</h2>
+<pre class="r"><code>drinks %&gt;%
+  slice_max(order_by= wine_servings, n=25) %&gt;%
+  ggplot(aes(x=wine_servings, y=fct_reorder(country, wine_servings)))+
+  geom_col(fill=&#39;red&#39;)+
+  theme_bw()+
+  labs(title=&quot;A Plot Showing Top 25 Countries by Wine Consumption&quot;, x=&quot;Wine Servings&quot;, y=&quot;Country Name&quot;)+ 
+  NULL</code></pre>
+<p><img src="/blogs/beer_files/figure-html/wine_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="make-a-plot-that-shows-the-top-25-spirit-consuming-countries" class="section level2">
+<h2>Make a plot that shows the top 25 spirit consuming countries</h2>
+<pre class="r"><code>drinks %&gt;%
+  slice_max(order_by= spirit_servings, n=25) %&gt;%
+  ggplot(aes(x=spirit_servings, y=fct_reorder(country, spirit_servings)))+
+  geom_col(fill=&#39;purple&#39;)+
+  theme_bw()+
+  labs(title=&quot;A Plot Showing Top 25 Countries by Spirit Consumption&quot;, x=&quot;Spirit Servings&quot;, y=&quot;Country Name&quot;)+ 
+  NULL</code></pre>
+<p><img src="/blogs/beer_files/figure-html/spirit_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="what-can-you-infer-from-these-plots-dont-just-explain-whats-in-the-graph-but-speculate-or-tell-a-short-story-1-2-paragraphs-max." class="section level2">
+<h2>What can you infer from these plots? Don’t just explain what’s in the graph, but speculate or tell a short story (1-2 paragraphs max).</h2>
+<p>Answer: The evidence suggests no clear pattern in the leading countries consuming different types of alcohol. For instance: Namibia, Czech Republic and Gabon are the top 3 beer consuming countries. France, Portugal, Andorra are the top 3 wine consuming countries. Grenada, Belarus and Russian Federation are the top 3 Spirit consuming countries.**</p>
+<p>A noticeable pattern is that countries consume more alcohol, which is locally produced. For instance, beer is popular in Czech Republic as they are one of the world’s largest producers of beer. The same applies to France for wine and Russia for spirits.</p>
+<p>In addition to this, further research is required to isolate consumption of locals and tourists as some of the top drinkers are holiday destinations (e.g. Caribbean islands).</p>
+<p>Moreover, some festivals may have an impact on the alcohol consumption. For example, around 6 million people take part in the Oktoberfest in Germany every October, which may add to the volume of beer consumed.</p>
+</div>
+</div>

@@ -10,7 +10,7 @@ params:
     subtitle: |-
       Brought up in China, I have studied across China, Singapore, and the UK. I am now a MFA student at LBS. 
       
-      Prior, I studied engineering during my undergraduate and graduated earlier this year.
+      Prior, I studied engineering at my undergrad and graduated earlier this year from the University of Oxford.
     title: Hi, my name is Kaize Ying, LBS MFA 2022, thanks for visiting my website!
   blog: {}
   contact:
@@ -58,7 +58,7 @@ params:
       - icon: fa-linkedin
         label: LinkedIn
         url: https://www.linkedin.com/feed/
-  image: ''
+  image:
   name: Your name
   navigation:
     button1:
@@ -84,38 +84,32 @@ params:
     showcase:
       - image: Kaize.jpg
         subtitle: Wanna know more about me?
-        title: Self-intro
+        title: Self Intro
         url: blogs/kaize_intro
       - image: Oxford.jpg
         subtitle: My Alma mater
         title: Oxford
         url: https://www.ox.ac.uk/
       - image: Bike.jpg
-        subtitle: Excess rentals in TfL bike sharing
-        title: Bike
-        url: blogs/bike_analysis
-      - image: pic03.jpg
-        subtitle: Lorem Etiam Nullam
-        title: Magna
-        url: blogs/magna
-      - image: pic04.jpg
-        subtitle: 
-        title: Ipsum
-        url: blogs/ipsum
-      - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
-      - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
-        url: blogs/ipsum
+        subtitle: Curious about people's drink habits at different countries?
+        title: Alochol Consumption Analysis
+        url: blogs/beer
+      - image: pic1.jpg
+        subtitle: Risk-Return of DJIA stocks
+        title: Stock Analysis 
+        url: blogs/risk_return
+      - image: wind.jpg
+        subtitle: Fancy cutting the edge and learning some funky enrgy engineering?
+        title: Energy Production
+        url: blogs/Introduction _Summary Slides_.pdf
+
   two:
     buttonText: Get Started
     enable: yes
     subtitle: "
     Besides my academic interets in novel materials and professional interests in investing, I have spent a large amount of time exploring different things.
       \n  For example, I enjoy cooking, travelling, moutain-climbing, and used to take a train trip back from London to my hometown in China.
+      \n  I also used to be quite actively involved in the Oxford Union back to my undergraduate.
       \n  Feel free to reach out if we have something in common so that we can have a chat :)      "
-    title: My
-    url: blogs
+    title: My interests
+    url: https://oxford-union.org

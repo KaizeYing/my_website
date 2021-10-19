@@ -1,5 +1,5 @@
 ---
-title: "Bike"
+title: Bike
 author: "LBS MFA2022 Study Group A9, Members: Kaize Ying, Arman Topchu, Yiyue Hu, Leonie Bick, Lorenz Freigassner, Tafadzwa Chinanzvavana, Vrinda Gupta"
 date: "`r Sys.Date()`"
 output:

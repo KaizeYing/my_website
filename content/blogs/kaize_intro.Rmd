@@ -24,7 +24,7 @@ library(janitor)
 > # Short biography
 ## Kaize Ying, MFA 2022
 
->It's a great pleasure to meet you. My name is Kaize, a MFA student at LBS. Prior, I finished my undergraduate education at **the University of Oxford**, majoring in Materials Science. 
+>It's a great pleasure to meet you. My name is Kaize, a MFA student at LBS. Prior, I finished my undergraduate education of engineering at **the University of Oxford**.
 
 >Professional wise, I have a strong interest in corporate finance, and have completed internships both in China and the UK, including:
 

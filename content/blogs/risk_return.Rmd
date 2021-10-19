@@ -56,7 +56,7 @@ We will use the `rvest` package to scrape the Wikipedia page for the constituent
 
 djia_url <- "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
 
-knitr::include_graphics("/img/pic07.jpg",error =FALSE)
+knitr::include_graphics("/img/pic1.jpg",error =FALSE)
 
 
 #get tables that exist on URL
@@ -93,8 +93,6 @@ tickers <- table1 %>%
   c("SPY", "^VIX") # and lets us add SPY, the SP500 ETF, and the VIX index
 
 ```
-
-
 
 
 ```{r get_price_data, message=FALSE, warning=FALSE, cache=TRUE}
@@ -153,6 +151,11 @@ myStocks_returns_monthly %>%
 
 ```
 
+## It can easily tell that all the DJIA stocks are following similar patterns for monthly returns. This makes sense as stock performance is quite highly correlated with market conditions. For example, during expansion periods, equity market would normally go through a "bull market", so it would be easy for the stocks to generate returns, while in bear markets, such returns are normally lower and can be negative even. This thus results into the similar distributions we are seeing. 
+
+## It is also worth nothcing even though stocks are following similar patterns, there are still differences in the exact returns they generaate even at the same time. This can be quantified as "beta", which is the correlation with the generally equity market. For example, for stocks with beta of 1, their movements are exactly with the market, while for stocks with beta of 2, the price movements would be the twice of market volatility. 
+
+
 
 ```{r, risk_return, echo=FALSE}
 
@@ -190,3 +193,8 @@ by_year_monthly %>%
   NULL
 
 ```
+## We can tell that from 2018 to 2019, generally, risks of stocks move to the higher end. This can be translatted into that generally equity market is going through a higher volatility, and the returns from equity compensated investors accordingly.
+
+## However from 2019 to 2020, even though risks further increased (shifted to the right), returns seems to stay at the same level with 2019, or even lower. This is possibly due to the unexpected global COVID-19 pandemic, which caused nagtive market sentiments and thus large risk/volatility of the equity market. For some investors, they may want to pull out their investments from equity market, as the additional risks they take are not compensated accordingly.
+
+## From 2020 to 2021, both returns and risks generally decrease, which suggests a calm-down equity market, by comparing to 2020. Also, 2017 seems to be the most suitable year for equity investing, due to the relatively higher level of returns while lower level of risks.
