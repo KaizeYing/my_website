@@ -1,15 +1,17 @@
 ---
-title: "Beer consumption analysis"
-author: "Study Group A9"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    theme: flatly
-    highlight: zenburn
-    number_sections: yes
-    toc: yes
-    toc_float: yes
-    code_folding: show
+
+---
+categories:  
+- ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
+- ""
+date: "2021-09-30"
+description: Alcohol consumption at different countries
+draft: false
+image: Bike.jpg  pics wont work
+
+keywords: ""
+slug: beer
+title: Alcohol consumption analysis
 ---
 
 ```{r, setup, echo=FALSE}
