@@ -1,6 +1,4 @@
 ---
-
----
 categories:  
 - ""    #the front matter should be like the one found in, e.g., blog2.md. It cannot be like the normal Rmd we used
 - ""
