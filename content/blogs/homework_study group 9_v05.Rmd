@@ -1,0 +1,772 @@
+---
+title: "Session 2: Homework 1"
+author: "Study Group A9"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,   
+  size="small")   
+options(digits = 3)
+
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)
+library(kableExtra)
+```
+
+# Where Do People Drink The Most Beer, Wine And Spirits?
+
+Back in 2014, [fivethiryeight.com](https://fivethirtyeight.com/features/dear-mona-followup-where-do-people-drink-the-most-beer-wine-and-spirits/) published an article on alcohol consumption in different countries. The data `drinks` is available as part of the `fivethirtyeight` package. Make sure you have installed the `fivethirtyeight` package before proceeding.
+
+```{r, load_alcohol_data}
+library(fivethirtyeight)
+data(drinks)
+```
+
+## What are the variable types? Any missing values we should worry about?
+
+Answer: From the below, we can see that there are no missing values. Variable types are character (country), double (total_litres_of_pure_alcohol), and integer (the rest variables) We can also see that Afghanistan has zero "total liters of pure alcohol consumed". One can expect this to be the case in other countries that have laws that forbid alcohol consumption.
+
+```{r glimpse_skim_data}
+  glimpse(drinks)
+  skim(drinks)
+```
+
+## Make a plot that shows the top 25 beer consuming countries
+
+```{r beer_plot}
+drinks %>%
+  slice_max(order_by= beer_servings, n=25) %>%
+  ggplot(aes(x=beer_servings, y=fct_reorder(country, beer_servings)))+
+  geom_col(fill='pink')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Beer Consumption", x="Beer Servings", y="Country Name")+ 
+  NULL
+```
+
+## Make a plot that shows the top 25 wine consuming countries
+
+```{r wine_plot}
+drinks %>%
+  slice_max(order_by= wine_servings, n=25) %>%
+  ggplot(aes(x=wine_servings, y=fct_reorder(country, wine_servings)))+
+  geom_col(fill='red')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Wine Consumption", x="Wine Servings", y="Country Name")+ 
+  NULL
+```
+
+## Make a plot that shows the top 25 spirit consuming countries
+
+```{r spirit_plot}
+drinks %>%
+  slice_max(order_by= spirit_servings, n=25) %>%
+  ggplot(aes(x=spirit_servings, y=fct_reorder(country, spirit_servings)))+
+  geom_col(fill='purple')+
+  theme_bw()+
+  labs(title="A Plot Showing Top 25 Countries by Spirit Consumption", x="Spirit Servings", y="Country Name")+ 
+  NULL
+```
+
+## What can you infer from these plots? Don't just explain what's in the graph, but speculate or tell a short story (1-2 paragraphs max).
+
+Answer: The evidence suggests no clear pattern in the leading countries consuming different types of alcohol. For instance: Namibia, Czech Republic and Gabon are the top 3 beer consuming countries. France, Portugal, Andorra are the top 3 wine consuming countries. Grenada, Belarus and Russian Federation are the top 3 Spirit consuming countries.**
+
+A noticeable pattern is that countries consume more alcohol, which is locally produced. For instance, beer is popular in Czech Republic as they are one of the world's largest producers of beer. The same applies to France for wine and Russia for spirits.
+
+In addition to this, further research is required to isolate consumption of locals and tourists as some of the top drinkers are holiday destinations (e.g. Caribbean islands).
+
+Moreover, some festivals may have an impact on the alcohol consumption. For example, around 6 million people take part in the Oktoberfest in Germany every October, which may add to the volume of beer consumed.
+
+# Analysis of movies- IMDB dataset
+
+We will look at a subset sample of movies, taken from the [Kaggle IMDB 5000 movie dataset](https://www.kaggle.com/carolzhangdc/imdb-5000-movie-dataset)
+
+```{r,load_movies, warning=FALSE, message=FALSE}
+movies <- read_csv(here::here("data", "movies.csv"))
+glimpse(movies)
+```
+
+Besides the obvious variables of `title`, `genre`, `director`, `year`, and `duration`, the rest of the variables are as follows:
+
+-   `gross` : The gross earnings in the US box office, not adjusted for inflation
+-   `budget`: The movie's budget
+-   `cast_facebook_likes`: the number of facebook likes cast members received
+-   `votes`: the number of people who voted for (or rated) the movie in IMDB
+-   `reviews`: the number of reviews for that movie
+-   `rating`: IMDB average rating
+
+## Are there any missing values (NAs)? Are all entries distinct or are there duplicate entries?
+
+Answer: From the below we can see that there are no missing values. There are duplicates since there are 2907 unique titles but 2961 entries.
+
+```{r,missing entries movies}
+movies %>%
+skimr::skim()
+```
+
+## Produce a table with the count of movies by genre, ranked in descending order
+
+```{r, genre table movies}
+movies%>%
+  count(genre, sort=TRUE) %>%
+  kable()
+```
+
+## Produce a table with the average gross earning and budget (`gross` and `budget`) by genre. Calculate a variable `return_on_budget` which shows how many \$ did a movie make at the box office for each \$ of its budget. Ranked genres by this `return_on_budget` in descending order.
+
+```{r, earning table movies}
+movies%>%
+  group_by(genre)%>%
+  summarise(avg_gross_earning=mean(gross), avg_budget=mean(budget))%>%
+  mutate(return_on_budget=avg_gross_earning/avg_budget)%>%
+  arrange(desc(return_on_budget)) %>%
+  kable()
+```
+
+## Produce a table that shows the top 15 directors who have created the highest gross revenue in the box office. Don't just show the total gross amount, but also the mean, median, and standard deviation per director.
+
+```{r, directors table movies}
+movies%>%
+  group_by(director) %>%
+  summarise(total_gross=sum(gross), avg_gross_earning=mean(gross), median_grosss_earning=median(gross), sd_gross_earning=sd(gross)) %>%
+  arrange(desc(avg_gross_earning))%>%
+  head(15) %>%
+  kable()
+```
+
+## Produce a table that describes how ratings are distributed by genre.
+
+```{r, ratings table 1 movies}
+movies %>%
+  group_by(genre) %>%
+  summarise(mean_ratings=mean(rating), min_ratings=min(rating), max_ratings=max(rating), sd_ratings=sd(rating)) %>%
+  arrange(desc(mean_ratings)) %>%
+  kable()
+```
+
+## A histogram or density graph that visually shows how ratings are distributed.
+
+```{r, ratings table 2 movies}
+
+t = movies%>%
+  arrange(desc(rating))
+
+x <- data.frame(density(t$rating)[c("x", "y")])
+quantile(x$x, probs =  c(.25, .40, .60,.75))
+
+ ggplot(x, aes(x, y)) + geom_area(data =  subset(x, x < 3.26), fill = "pink") +
+      geom_area(data = subset(x, x < 4.57), fill = "red") +
+      geom_area(data = subset(x, x > 6.33), fill = "lightgreen") +
+      geom_area(data = subset(x, x > 7.64), fill = "green") +
+      geom_line()+
+      labs(title="Distribution of ratings", x="Rating from 1 to 10", y="", subtitle= "Percentiles: 25%, 40%, 60%, and 75%")
+```
+
+## Examine the relationship between `gross` and `cast_facebook_likes`.
+
+Produce a scatterplot and write one sentence discussing whether the number of facebook likes that the cast has received is likely to be a good predictor of how much money a movie will make at the box office. What variable are you going to map to the Y- and X- axes?
+
+```{r, gross_on_fblikes}
+ggplot(movies, aes(y=gross/1000000, x =cast_facebook_likes))+
+  geom_point()+
+  xlim(0,150000)+
+  ylim(0,400)+
+  geom_smooth(method = lm)+
+  labs(title= "Gross vs number of Facebook likes", x="Number of likes on Facebook", y="Gross in millions" )
+
+cor(movies$gross, movies$cast_facebook_likes)
+```
+
+Answer: The X-axis depicts the Number of Likes on Facebook, and the Y-axis depicts the Gross Earnings of the movies. From the below scatter plot, we can map a linear positive relationship between the X and the Y variables. The correlation is positive, and the coefficient of 0.213 depicts that a movie with high likes on Facebook is almost 21% likely to have high gross earnings, hence the correlation is not very high.
+
+## Examine the relationship between `gross` and `budget`.
+
+Produce a scatterplot and write one sentence discussing whether budget is likely to be a good predictor of how much money a movie will make at the box office.
+
+```{r, gross_on_budget}
+ggplot(movies, aes(y=gross/1000000, x =budget))+
+  geom_point()+
+  xlim(0,150000)+
+  ylim(0,30)+
+  geom_smooth(method = lm)+
+  labs(title= "Gross vs Budget", x="Budget", y="Gross in millions" )
+
+cor(movies$gross, movies$budget)
+```
+
+Answer: The correlation coefficient between Gross Earnings and the Budget of the movies is 0.641, which depicts a positive relationship between the two variables. Since the coefficient is more than 0.5, we can say that higher budget movies have higher gross earnings.
+
+## Examine the relationship between `gross` and `rating`.
+
+Produce a scatterplot, faceted by `genre` and discuss whether IMDB ratings are likely to be a good predictor of how much money a movie will make at the box office. Is there anything strange in this dataset?
+
+```{r, gross_on_rating}
+ggplot(movies, aes(y=gross/1000000, x = rating))+
+ ylim(0,400)+
+  geom_point()+
+  facet_wrap(~ genre, ncol = 3)+ ##arranges graphs in 3 columns
+  labs(title= "Gross vs Rating by Genre", x="Rating", y="Gross in millions" )
+
+cor(movies$gross, movies$rating)
+```
+
+Answer: We notice that Gross Earnings and Rating have very varied relationships across genres. The most popular genres including - Action, Adventure, Drama - have linear positive relationships between Gross Earnings and Ratings, however we noticed that the less popular genres including - Documentary, Fantasy, Horror, Family, Mystery - do not have a linear positive relationships. The relationship is flat, implying that the gross earnings do not increase proportionately even with large increase in the ratings.
+
+# Returns of financial stocks
+
+> You may find useful the material on [finance data sources](https://mfa2022.netlify.app/reference/finance_data/).
+
+We will use the `tidyquant` package to download historical data of stock prices, calculate returns, and examine the distribution of returns.
+
+We must first identify which stocks we want to download data for, and for this we must know their ticker symbol; Apple is known as AAPL, Microsoft as MSFT, McDonald's as MCD, etc. The file `nyse.csv` contains 508 stocks listed on the NYSE, their ticker `symbol`, `name`, the IPO (Initial Public Offering) year, and the sector and industry the company is in.
+
+```{r load_nyse_data, message=FALSE, warning=FALSE}
+nyse <- read_csv(here::here("data","nyse.csv"))
+glimpse(nyse)
+```
+
+## Create a table and a bar plot that shows the number of companies per sector, in descending order
+
+```{r, companies_per_sector}
+
+nyse1 <- nyse %>%
+  group_by(sector)%>%
+  count() %>%
+  arrange(desc(n)) %>%
+  transmute(number_of_companies = n)
+
+print(nyse1)
+
+nyse1 %>%
+  ggplot(aes(x=number_of_companies, y= fct_reorder(sector,number_of_companies))) +
+  geom_bar(fill = "black", stat='identity') +
+  theme_bw()+
+  labs(
+    title = "Barplot that shows the number of companies per sector in descending order",
+    subtitle = "",
+    x = "Number of companies",
+    y = "Sector"
+  )
+```
+
+## Dow Jones
+
+Next, let's choose the [Dow Jones Industrial Aveareg (DJIA)](https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average) stocks and their ticker symbols and download some data. Besides the thirty stocks that make up the DJIA, we will also add `SPY` which is an SP500 ETF (Exchange Traded Fund). The following code
+
+```{r, tickers_from_wikipedia}
+
+djia_url <- "https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average"
+
+tables <- djia_url %>%
+  read_html() %>% 
+  html_nodes(css="table")
+
+djia <- map(tables, . %>% 
+               html_table(fill=TRUE)%>% 
+               clean_names())
+
+
+table1 <- djia[[2]] %>%
+  mutate(date_added = ymd(date_added),
+         
+         ticker = ifelse(str_detect(symbol, "NYSE*"),
+                          str_sub(symbol,7,11),
+                          symbol))
+
+tickers <- table1 %>% 
+  select(ticker) %>% 
+  pull() %>% 
+  c("SPY")
+
+print(table1)
+
+```
+
+Now let us download prices for all 30 DJIA constituents and the SPY ETF that tracks SP500 since January 1, 2020
+
+```{r get_price_data, message=FALSE, warning=FALSE, cache=TRUE}
+
+myStocks <- tickers %>% 
+  tq_get(get  = "stock.prices",
+         from = "2000-01-01",
+         to   = Sys.Date()) %>%
+  group_by(symbol) 
+
+glimpse(myStocks)
+```
+
+## Financial Performance Analysis
+
+Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.
+
+Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.
+
+```{r calculate_returns, message=FALSE, warning=FALSE, cache=TRUE}
+#calculate daily returns
+myStocks_returns_daily <- myStocks %>%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "daily", 
+               type       = "log",
+               col_rename = "daily_returns",
+               cols = c(nested.col))  
+
+#calculate monthly  returns
+myStocks_returns_monthly <- myStocks %>%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "monthly", 
+               type       = "arithmetic",
+               col_rename = "monthly_returns",
+               cols = c(nested.col)) 
+
+#calculate yearly returns
+myStocks_returns_annual <- myStocks %>%
+  group_by(symbol) %>%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = "yearly", 
+               type       = "arithmetic",
+               col_rename = "yearly_returns",
+               cols = c(nested.col))
+
+print(myStocks_returns_monthly)
+```
+
+## Create a table where you summarise monthly returns for each of the stocks and `SPY`; min, max, median, mean, SD.
+
+```{r, summarise_monthly_returns}
+
+ourtable1 <- myStocks_returns_monthly %>%
+  group_by(symbol) %>%
+  summarise(Minimum = min(monthly_returns), Maximum = max(monthly_returns), Median = median(monthly_returns), Mean = mean(monthly_returns), SD = sd(monthly_returns))
+
+print(ourtable1)
+```
+
+## Plot a density plot, using `geom_density()`, for each of the stocks
+
+```{r, density_monthly_returns}
+myStocks_returns_monthly%>%
+  ggplot(aes(x=monthly_returns)) +
+  facet_wrap("symbol")+
+  geom_density()+ 
+  labs(x= "Density Plot for Each Stock")
+```
+
+### 3.6. What can you infer from this plot? Which stock is the riskiest? The least risky?
+
+Answer:From these density plots we can see that PG and J&J (Proctor and Gamble, Johnson and Johnson) seam as the least riskiest titles to hold, since they have the least spread across the mean (i.e. least standard deviation) and the the highest percentage of observation equal to the mean. The riskiest individual titles seem to be AAPL and CRM (Apple, Salesforce) given their high standard deviations and the least amount of observations around the mean.
+
+Something to highlight is the large difference between the two indices SPY and DOW. Whereas a share in the S&P 500 appears as one of the least riskiest titles, the DOW is amongst the most riskiest. This seems to boil down to diversification, whereas there are many in the S&P, you have much fewer companies in the Dow Jones Industrial Average, which also tend to have higher average risk associated with them (e.g. Apple).
+
+## Finally, make a plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis. Please use `ggrepel::geom_text_repel()` to label each stock
+
+```{r, risk_return_plot}
+ourtable1 %>%
+  ggplot(aes(x=Mean,y=SD,color=symbol))+
+  geom_point()+
+  ggrepel::geom_text_repel(aes(Mean,SD,label=symbol)) +
+  theme(legend.position = "none")
+```
+
+## What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?
+
+Answer: The stocks that will be riskier and are not accompanied by a higher return, will be in the top left quadrant. Here we can see stocks such as CSCO, INTC and AXP. These stocks are relatively risky but do not reward investors with a disproportionately large return such as CRM and Apple. 
+
+An interesting data point is the Dow Jones Industrial average. Despite being an index, it still belongs to the top left quadrant, which may stem from the fact that is compromised of only a few companies where some have high standard deviations (such as Apple, Microsoft) and others have low return (J&J, Coca Cola).
+
+# Is inflation transitory?
+
+> You may find useful the material on [downloading economic data from the FRED](https://mfa2022.netlify.app/reference/finance_data/#data-from-the-federal-reserve-economic-data-with-tidyquant).
+
+A recent study by the Bank for International Settlements (BIS) claimed that the [Current Inflation Spike Is Just Transitory](https://www.bloomberg.com/news/articles/2021-09-20/current-inflation-spike-is-just-transitory-new-bis-study-argues). As the article says,
+
+> The surge in inflation seen across major economies is probably short lived because it's confined to just a few sectors of the economy, according to the Bank for International Settlements.
+
+> New research by the BIS's Claudio Borio, Piti Disyatat, Egon Zakrajsek and Dora Xia adds to one of the hottest debates in economics -- how long the current surge in consumer prices will last. Both Federal Reserve Chair Jerome Powell and his euro-area counterpart Christine Lagarde have said the pickup is probably transitory, despite a snarled global supply chain and a spike in energy prices.
+
+You have to download data for CPI and the 10 year bill and produce the following graph
+
+```{r cpi_10year, echo=FALSE, out.width="90%"}
+knitr::include_graphics(here::here("images", "cpi_10year.png"), error = FALSE)
+```
+
+The relevant indicators from FRED are:
+
+-   [Consumer Price Index for All Urban Consumers: All Items in U.S. City Average](https://fred.stlouisfed.org/series/CPIAUCSL)
+-   [10-Year Treasury Constant Maturity Rate](https://fred.stlouisfed.org/series/GS10)
+
+```{r, get_cpi_10Year_yield}
+
+cpi  <-   tq_get("CPIAUCSL", get = "economic.data",
+                       from = "1980-01-01") %>% 
+  rename(cpi = symbol,
+         rate = price) %>%
+  
+  mutate(cpi_yoy_change = rate/lag(rate, 12) - 1)
+
+ten_year_monthly  <-   tq_get("GS10", get = "economic.data",
+                       from = "1980-01-01") %>% 
+  rename(ten_year = symbol,
+         yield = price) %>% 
+  mutate(yield = yield / 100)
+
+mydata <- 
+  cpi %>% 
+  left_join(ten_year_monthly, by="date") %>% 
+  mutate(
+    year = year(date), # using lubridate::year() to generate a new column with just the year
+    month = month(date, label = TRUE),
+    decade=case_when(
+      year %in% 1980:1989 ~ "1980s",
+      year %in% 1990:1999 ~ "1990s",
+      year %in% 2000:2009 ~ "2000s",
+      year %in% 2010:2019 ~ "2010s",
+      TRUE ~ "2020s"
+      )
+  )
+
+```
+
+# Challenge 1: Replicating a chart
+
+```{r challenge1, echo=FALSE, out.width="90%"}
+#knitr::include_graphics(here::here("images", "vaxxes_by_state_red_blue_every_county_070321_1.jpeg"), error = FALSE)
+```
+
+## Data
+
+```{r, vaccination_data, echo=FALSE, cache=TRUE}
+
+# Download CDC vaccination by county
+cdc_url <- "https://data.cdc.gov/api/views/8xkx-amqh/rows.csv?accessType=DOWNLOAD"
+vaccinations <- vroom(cdc_url) %>% 
+  janitor::clean_names() %>% 
+  filter(fips != "UNK") # remove counties that have an unknown (UNK) FIPS code
+
+# Download County Presidential Election Returns
+# https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ
+election2020_results <- vroom(here::here("data", "countypres_2000-2020.csv")) %>% 
+  janitor::clean_names() %>% 
+  
+  # just keep the results for the 2020 election
+  filter(year == "2020") %>% 
+  
+  # change original name county_fips to fips, to be consistent with the other two files
+  rename (fips = county_fips)
+
+# Download county population data
+population_url <- "https://www.ers.usda.gov/webdocs/DataFiles/48747/PopulationEstimates.csv?v=2232"
+population <- vroom(population_url) %>% 
+  janitor::clean_names() %>% 
+  
+  # select the latest data, namely 2019
+  select(fips = fip_stxt, pop_estimate_2019) %>% 
+  
+  # pad FIPS codes with leading zeros, so they are always made up of 5 characters
+  mutate(fips = stringi::stri_pad_left(fips, width=5, pad = "0"))
+
+```
+
+## Graph
+
+```{r challenge1, echo=FALSE, out.width="90%"}
+#Cleaning the election result data
+clean_electionresults <- election2020_results %>% 
+  filter(candidate == "DONALD J TRUMP", mode == "TOTAL") %>% 
+  select(fips, candidatevotes, totalvotes) %>% 
+  mutate(trump_percentage=candidatevotes/totalvotes) %>% 
+  select(-candidatevotes, -totalvotes)
+
+#Cleaning vaccination data
+clean_vaccination <- vaccinations %>% 
+  filter(date == "07/04/2021") %>% 
+  mutate(
+    percent_vaccinated=case_when(
+      recip_state %in% c("CA", "GA", "IA", "MI", "TX") ~ administered_dose1_pop_pct,
+      T ~ series_complete_pop_pct)) %>% 
+  select(fips, percent_vaccinated) %>% 
+  filter(percent_vaccinated > 0.0) #Filter out any pct_vaccinated that are 0%
+
+#Joining election and vaccination data
+my_data <- clean_electionresults %>% 
+  left_join(population, by="fips") %>% 
+  left_join(clean_vaccination, by="fips")
+
+#Graph the data
+  ggplot(my_data, aes(x=trump_percentage, y=percent_vaccinated)) +
+  geom_point(size=0.5) +
+    geom_point(aes(size=pop_estimate_2019), color='black', alpha=0.20) +
+    labs(title = "Covid-19 Vaccination Levels by % Voting for Trump by County",
+       x="% Voting for Trump in 2020",
+       y="Percent of County Vaccinated") +
+       theme(legend.position = "none", aspect.ratio=1)
+  
+knitr::include_graphics(here::here("images", "vaxxes_by_state_red_blue_every_county_070321_1.jpeg"), error = FALSE)
+```
+
+```{r, vaccination_graph, warnings= FALSE, message=FALSE}
+pop_estimate_2019
+```
+
+
+```{r, vaccination_graph, warnings= FALSE, message=FALSE}
+# Assuming that all citizen below 18 are not vaccinated and do not participate in the elections.
+
+voting_trump<-election2020_results %>% 
+  filter(candidate == "DONALD J TRUMP", mode == "TOTAL") %>% 
+  select(fips, candidatevotes, totalvotes) %>% 
+  mutate(voting_percentage_trump=candidatevotes/totalvotes*100) %>% 
+  select(-candidatevotes, -totalvotes)
+
+#Cleaning vaccination data
+clean_vaccination <- vaccinations %>% 
+  filter(date == "07/04/2021") %>% 
+  mutate(
+    percent_vaccinated=case_when(
+      recip_state %in% c("CA", "GA", "IA", "MI", "TX") ~ administered_dose1_pop_pct,
+      T ~ series_complete_pop_pct)) %>% 
+  select(fips, percent_vaccinated) %>% 
+  filter(percent_vaccinated > 0.0) #Filter out any pct_vaccinated that are 0%
+
+Chart<-population %>% 
+  left_join(voting_trump, by="fips") %>% 
+  left_join(clean_vaccination, by="fips") %>% 
+  mutate(vaccined_percentage=percent_vaccinated/100) %>%
+mutate(voting_percentage_trump=voting_percentage_trump/100)
+
+ggplot(Chart,aes(x=voting_percentage_trump,y=vaccined_percentage, colour=voting_percentage_trump))+
+  geom_point(size=0.3)+
+  geom_point(aes(size=pop_estimate_2019), color='blue', alpha=0.20)+
+  scale_size_continuous(range = c(1, 100))+
+   geom_hline(yintercept=0.539,
+              linetype="dotted", 
+              colour="red")+
+   annotate("text", 
+            x = 0.2, y = 0.539, 
+            label = "Target - 53.9%", 
+            vjust = -0.5, colour="red", 
+            fontface = "bold.italic", 
+            size=4, 
+            angle=0)+
+  geom_hline(yintercept=0.508,
+             linetype="dotted", 
+             colour="black")+
+   annotate("text", x = 0.2, y = 0.508, 
+            label = "Actual - 50.8%", vjust = -0.5, 
+            colour="black", 
+            fontface = "bold.italic", 
+            size=4, 
+            angle=0)+
+  geom_hline(yintercept=0.85,
+             linetype="dotted", 
+             colour="blue")+
+   annotate("text", x = 0.2, y = 0.85, 
+            label = "Herd Immunity Threshold(?) - 85%", 
+            vjust = -0.5, 
+            colour="blue", 
+            fontface = "bold.italic", 
+            size=4, 
+            angle=0)+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))+
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1))+
+   labs(
+    title = "COVID-19 Vaccination Levels Out of Total Population By Country",
+    subtitle = "(most states on Fully vaccinated only; CA, GA, IA, MI & TX based on total doses administered)",
+    x = "2020 Trump Vote % ",
+    y = "% of Total Population Vaccinated")+
+  theme(legend.position = "none", aspect.ratio=1)+
+  theme(
+  axis.title.x = element_text(size = 12, face="bold"),
+  axis.title.y = element_text(size = 12, face="bold"))+
+  theme(plot.title = element_text(size=20, face="bold", hjust = 0.5))+
+  theme(plot.subtitle = element_text(size=15, face="bold", hjust = 0.5))+
+  NULL
+  
+```
+
+
+You may find counties that as of September 2021 have 0% vaccination; don't discard them immediately, try to find out why you have zeros!
+
+
+
+# Challenge 2: Opinion polls for the 2021 German elections
+
+The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election) and your task is to reproduce the graph similar to the one produced by the Guardian.
+
+The following code will scrape the wikipedia page and import the table in a dataframe.
+
+```{r, vaccination_graph, warnings= FALSE, message=FALSE}
+# Assuming that all citizen below 18 are not vaccinated and do not participate in the elections.
+
+voting_trump<-election2020_results %>% 
+  filter(candidate == "DONALD J TRUMP", mode == "TOTAL") %>% 
+  select(fips, candidatevotes, totalvotes) %>% 
+  mutate(voting_percentage_trump=candidatevotes/totalvotes) %>% 
+  select(-candidatevotes, -totalvotes)
+
+#Cleaning vaccination data
+clean_vaccination <- vaccinations %>% 
+  filter(date == "07/04/2021") %>% 
+  mutate(
+    percent_vaccinated=case_when(
+      recip_state %in% c("CA", "GA", "IA", "MI", "TX") ~ administered_dose1_pop_pct,
+      T ~ series_complete_pop_pct)) %>% 
+  select(fips, percent_vaccinated) %>% 
+  filter(percent_vaccinated > 0.0) #Filter out any pct_vaccinated that are 0%
+
+Chart<-population %>% 
+  left_join(voting_trump, by="fips") %>% 
+  left_join(clean_vaccination, by="fips") %>% 
+  mutate(vaccined_percentage=percent_vaccinated/100)
+
+ggplot(Chart,aes(x=voting_percentage_trump,y=vaccined_percentage, size=pop_estimate_2019,colour=voting_percentage_trump))+
+  geom_point(size=0.3)+
+  geom_point(aes(size=pop_estimate_2019), color='blue', alpha=0.20)+
+  scale_size_continuous(range = c(1, 80))+
+   geom_hline(yintercept=0.539,linetype="dotted", colour="red")+
+   annotate("text", x = 0.2, y = 0.539, 
+            label = "Target - 53.9%", vjust = -0.5, 
+            colour="red", fontface = "bold.italic", 
+            size=4, angle=0)+
+  geom_hline(yintercept=0.508,linetype="dotted", colour="black")+
+   annotate("text", x = 0.2, y = 0.508, 
+            label = "Actual - 50.8%", vjust = -0.5, 
+            colour="black", fontface = "bold.italic", 
+            size=4, angle=0)+
+  geom_hline(yintercept=0.85,linetype="dotted", colour="blue")+
+   annotate("text", x = 0.2, y = 0.85, 
+            label = "Herd Immunity Threshold(?) - 85%", vjust = -0.5, 
+            colour="blue", fontface = "bold.italic", 
+            size=4, angle=0)+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))+
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1))+
+   labs(
+    title = "COVID-19 Vaccination Levels Out of Total Population By Country",
+    subtitle = "(most states on Fully vaccinated only; CA, GA, IA, MI & TX based on total doses administered)",
+    x = "2020 Trump Vote % ",
+    y = "% of Total Population Vaccinated")+
+  theme(
+  axis.title.x = element_text(size = 12, face="bold"),
+  axis.title.y = element_text(size = 12, face="bold"))+
+  theme(plot.title = element_text(size=20, face="bold", hjust = 0.5))+
+  theme(plot.subtitle = element_text(size=15, face="bold", hjust = 0.5))+
+  theme(legend.position = "none")+
+  NULL
+  
+```
+
+## Creating a 14-day moving average for all parties
+
+```{r, moving_averages_dataframes, warnings= FALSE, message=FALSE}
+
+dataframe_election <- german_election_polls %>%
+  select(union,spd,af_d,fdp,linke,grune,end_date) %>%
+  mutate(
+    union_RA =zoo::rollmean(union, k=14, fill= NA),
+    spd_RA =zoo::rollmean(spd, k=14, fill= NA),
+    af_d_RA =zoo::rollmean(af_d, k=14, fill= NA),
+    fdp_RA =zoo::rollmean(fdp, k=14, fill= NA),
+    linke_RA =zoo::rollmean(linke, k=14, fill= NA),
+    grune_RA =zoo::rollmean(grune, k=14, fill= NA),
+  ) %>%
+  select(union_RA,spd_RA,af_d_RA,fdp_RA,linke_RA,grune_RA,end_date)
+
+```
+
+## Creating individual dataframes for each party
+
+```{r, invidual_dataframes, warnings = FALSE, message= FALSE}
+
+union_df <- dataframe_election %>%
+  select(union_RA, end_date) %>%
+  rename(percentage_party = union_RA)
+
+spd_df <- dataframe_election %>%
+  select(spd_RA, end_date) %>%
+  rename(percentage_party = spd_RA)
+
+af_d_df <- dataframe_election %>%
+  select(af_d_RA, end_date) %>%
+  rename(percentage_party = af_d_RA)
+
+fdp_df <- dataframe_election %>%
+  select(fdp_RA, end_date) %>%
+  rename(percentage_party = fdp_RA)
+
+linke_df <- dataframe_election %>%
+  select(linke_RA, end_date) %>%
+  rename(percentage_party = linke_RA)
+
+grune_df <- dataframe_election %>%
+  select(grune_RA, end_date) %>%
+  rename(percentage_party = grune_RA)
+
+```
+
+## Plotting the data
+
+```{r, plot of graph, warnings= FALSE, message=FALSE}
+
+ggplot(union_df, aes(x=end_date, y=percentage_party)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(colour='black') + 
+  geom_point(data=spd_df,colour='firebrick3',alpha = 0.3) +
+  geom_smooth(data=spd_df,colour='firebrick3') +
+  geom_point(data=af_d_df,colour='deepskyblue3',alpha = 0.3) +
+  geom_smooth(data=af_d_df,colour='deepskyblue3') +
+  geom_point(data=fdp_df,colour='yellow2',alpha = 0.3) +
+  geom_smooth(data=fdp_df,colour='yellow2') +
+  geom_point(data=linke_df,colour='violetred3',alpha = 0.3) +
+  geom_smooth(data=linke_df,colour='violetred3') +
+  geom_point(data=grune_df,colour='chartreuse3',alpha = 0.3) +
+  geom_smooth(data=grune_df,colour='chartreuse3') +
+  theme_bw()+
+  labs(title = "Opinion polling for the 2021 German federal election",
+       subtitle = "Individual data points represent the 14-day moving average for an indiviudal party across 16 different polling institutes",
+       x = "Date at which the polling data was collected", 
+       y = "Predicted percentage of votes achieved",
+       caption = "Source: https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election 
+       Legend: Union = Black, SPD = Red = AFD = Blue, FDP = Yellow, Linke = Purple, Grüne = Green",
+       ) +
+  NULL
+
+```
+
+# Details
+
+-   Who did you collaborate with: **Arman Topchu, Kaize Ying, Leonie Bick, Lorenz Freigassner, Tafadzwa Chinanzvavana, Yiyue Hu, Vrinda Gupta**
+
+-   Approximately how much time did you spend on this problem set: **10 hours**
+
+-   What, if anything, gave you the most trouble: **We felt challenged while downloading the data files for Challenge 1.**

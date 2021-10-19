@@ -8,9 +8,10 @@ params:
   banner:
     buttonText: Get Started
     subtitle: |-
-      A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Kaize Ying, MFA2022, love data analytics
+      Brought up in China, I have studied across China, Singapore, and the UK. I am now a MFA student at LBS. 
+      
+      Prior, I studied engineering during my undergraduate and graduated earlier this year.
+    title: Hi, my name is Kaize Ying, LBS MFA 2022, thanks for visiting my website!
   blog: {}
   contact:
     address:
@@ -21,11 +22,11 @@ params:
     buttonClear: Clear
     buttonSend: Send message
     email:
-      - email: k.ying2022@hotmail.com / kying.mfa2022@london.edu
+      - email: kying.mfa2022@london.edu
         title: Email
     enable: yes
     phone:
-      - phone: (0044) 7983-472801 x1234
+      - phone: + 44 7983-472801
         title: Phone
   custom_css: []
   custom_js: []
@@ -48,9 +49,9 @@ params:
       #- icon: fa-facebook
         #label: Facebook
         #url: https://www.facebook.com
-      #- icon: fa-instagram
-        #label: Instagram
-        #url: https://www.instagram.com
+      - icon: fa-instagram
+        label: Instagram
+        url: https://www.instagram.com/fy0803/
       - icon: fa-github
         label: GitHub
         url: https://github.com/KaizeYing
@@ -81,20 +82,24 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: pic06.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Aliquam
-        url: blogs/aliquam
-      - image: pic02.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Tempus
-        url: blogs/tempus
+      - image: Kaize.jpg
+        subtitle: Wanna know more about me?
+        title: Self-intro
+        url: blogs/kaize_intro
+      - image: Oxford.jpg
+        subtitle: My Alma mater
+        title: Oxford
+        url: https://www.ox.ac.uk/
+      - image: Bike.jpg
+        subtitle: Excess rentals in TfL bike sharing
+        title: Bike
+        url: blogs/bike_analysis
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
         title: Magna
         url: blogs/magna
       - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
+        subtitle: 
         title: Ipsum
         url: blogs/ipsum
       - image: pic05.jpg
@@ -108,11 +113,9 @@ params:
   two:
     buttonText: Get Started
     enable: yes
-    subtitle: "Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero.
-      \n    Mauris aliquet magna magna sed nunc rhoncus pharetra. \n    Pellentesque
-      condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia
-      pellentesque lorem ipsum dolor. \n    Nullam et orci eu lorem consequat tincidunt.
-      Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
-      amet pharetra et feugiat tempus."
-    title: Massa libero
+    subtitle: "
+    Besides my academic interets in novel materials and professional interests in investing, I have spent a large amount of time exploring different things.
+      \n  For example, I enjoy cooking, travelling, moutain-climbing, and used to take a train trip back from London to my hometown in China.
+      \n  Feel free to reach out if we have something in common so that we can have a chat :)      "
+    title: My
     url: blogs
